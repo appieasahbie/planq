@@ -11,7 +11,7 @@
 + Planq Network
 + Explorer:
 
-https://explorer.planq.network/validators
+https://explorer.planq.network
 
 
 
