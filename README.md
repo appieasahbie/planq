@@ -222,35 +222,35 @@ Check logs
 ### Validator management
 + Edit validator
 
-     planqd tx staking edit-validator \
-      --moniker=$NODENAME \
-      --identity=<your_keybase_id> \
-      --website="<your_website>" \
-      --details="<your_validator_description>" \
-      --chain-id=$PLANQ_CHAIN_ID \
-      --from=$WALLET
+       planqd tx staking edit-validator \
+        --moniker=$NODENAME \
+        --identity=<your_keybase_id> \
+        --website="<your_website>" \
+        --details="<your_validator_description>" \
+        --chain-id=$PLANQ_CHAIN_ID \
+        --from=$WALLET
      
 + Unjail validator
 
-    planqd tx slashing unjail \
-      --broadcast-mode=block \
-      --from=$WALLET \
-      --chain-id=$PLANQ_CHAIN_ID \
-      --gas=auto
+      planqd tx slashing unjail \
+        --broadcast-mode=block \
+        --from=$WALLET \
+        --chain-id=$PLANQ_CHAIN_ID \
+        --gas=auto
      
      
 
 + Delete node
 This commands will completely remove node from server. Use at your own risk!
 
-     sudo systemctl stop planqd && \
-     sudo systemctl disable planqd && \
-     rm /etc/systemd/system/planqd.service && \
-     sudo systemctl daemon-reload && \
-     cd $HOME && \
-     rm -rf planqd && \
-     rm -rf .planqd && \
-     rm -rf $(which planqd)
+       sudo systemctl stop planqd && \
+       sudo systemctl disable planqd && \
+       rm /etc/systemd/system/planqd.service && \
+       sudo systemctl daemon-reload && \
+       cd $HOME && \
+       rm -rf planqd && \
+       rm -rf .planqd && \
+       rm -rf $(which planqd)
 
 
 
