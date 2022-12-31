@@ -1,4 +1,4 @@
-# Setup for Mainnet planq_7070-2
+# Setup for Mainnet planq
 
 
 
