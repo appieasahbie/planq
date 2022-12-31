@@ -43,40 +43,40 @@ You can setup your planq validator in few minutes by using automated script belo
 ### Post installation
 When installation is finished please load variables into system
 
-   source $HOME/.bash_profile
+    source $HOME/.bash_profile
    
 Next you have to make sure your validator is syncing blocks. You can use command below to check synchronization status
 
-   planqd status 2>&1 | jq .SyncInfo
+    planqd status 2>&1 | jq .SyncInfo
    
 ### Create wallet
 
 + To create new wallet you can use command below. Don’t forget to save the mnemonic
 
-   planqd keys add $WALLET
+    planqd keys add $WALLET
    
 (OPTIONAL) To recover your wallet using seed phrase
 
-   planqd keys add $WALLET --recover
-   
+      planqd keys add $WALLET --recover
+    
 + (import your wallet from metamask)   
 
-   planqd keys unsafe-import-eth-key <wallet-name> <private-key-eth> --keyring-backend file
-   
+      planqd keys unsafe-import-eth-key <wallet-name> <private-key-eth> --keyring-backend file
+    
    
 + To get current list of wallets
 
-   planqd keys list
+      planqd keys list
    
 (Save wallet info in your notepad)
 
 ### Add wallet and valoper address into variables
 
-   PLANQD_WALLET_ADDRESS=$(planqd keys show $WALLET -a)
-   PLANQD_VALOPER_ADDRESS=$(planqd keys show $WALLET --bech val -a)
-   echo 'export PLANQD_WALLET_ADDRESS='${PLANQD_WALLET_ADDRESS} >> $HOME/.bash_profile
-   echo 'export PLANQD_VALOPER_ADDRESS='${PLANQD_VALOPER_ADDRESS} >> $HOME/.bash_profile
-   source $HOME/.bash_profile
+    PLANQD_WALLET_ADDRESS=$(planqd keys show $WALLET -a)
+    PLANQD_VALOPER_ADDRESS=$(planqd keys show $WALLET --bech val -a)
+    echo 'export PLANQD_WALLET_ADDRESS='${PLANQD_WALLET_ADDRESS} >> $HOME/.bash_profile
+    echo 'export PLANQD_VALOPER_ADDRESS='${PLANQD_VALOPER_ADDRESS} >> $HOME/.bash_profile
+    source $HOME/.bash_profile
    
    
 ### Fund your wallet
@@ -87,25 +87,25 @@ Before creating validator please make sure that you have at least 1 planq (1 pla
 
 + To check your wallet balance:
 
-    planqd query bank balances $PLANQD_WALLET_ADDRESS
+      planqd query bank balances $PLANQD_WALLET_ADDRESS
     
 If your wallet does not show any balance than probably your node is still syncing. Please wait until it finish to synchronize and then continue
 
 To create your validator run command below
 
-   planqd tx staking create-validator \
-    --amount 1000000000000aplanq \
-    --from $WALLET \
-    --commission-max-change-rate "0.01" \
-    --commission-max-rate "0.2" \
-    --commission-rate "0.05" \
-    --min-self-delegation "1" \
-    --pubkey  $(planqd tendermint show-validator) \
-    --moniker $NODENAME \
-    --chain-id $PLANQ_CHAIN_ID \ 
-    --gas="1000000" \
-    --gas-prices="30000000000aplanq" \
-    --gas-adjustment="1.15"
+    planqd tx staking create-validator \
+     --amount 1000000000000aplanq \
+     --from $WALLET \
+     --commission-max-change-rate "0.01" \
+     --commission-max-rate "0.2" \
+     --commission-rate "0.05" \
+     --min-self-delegation "1" \
+     --pubkey  $(planqd tendermint show-validator) \
+     --moniker $NODENAME \
+     --chain-id $PLANQ_CHAIN_ID \ 
+     --gas="1000000" \
+     --gas-prices="30000000000aplanq" \
+     --gas-adjustment="1.15"
     
     
 ### Security
@@ -117,23 +117,26 @@ Good tutorial on how to set up ssh keys for authentication to your server can be
 + Basic Firewall security
   Start by checking the status of ufw.
 
-     sudo ufw status
+       sudo ufw status
      
 + Sets the default to allow outgoing connections, deny all incoming except ssh and 26656. Limit SSH login attempts
 
-     sudo ufw default allow outgoing
-     sudo ufw default deny incoming
-     sudo ufw allow ssh/tcp
-     sudo ufw limit ssh/tcp
-     sudo ufw allow ${PLANQ_PORT}656,${PLANQ_PORT}660/tcp
-     sudo ufw enable
+       sudo ufw default allow outgoing
+       sudo ufw default deny incoming
+       sudo ufw allow ssh/tcp
+       sudo ufw limit ssh/tcp
+       sudo ufw allow ${PLANQ_PORT}656,${PLANQ_PORT}660/tcp
+       sudo ufw enable
      
      
 ### Check your validator key
 
-    [[ $(planqd q staking validator $PLANQD_VALOPER_ADDRESS -oj | jq -r .consensus_pubkey.key) = $(planqd status | jq -r .ValidatorInfo.PubKey.value) ]] && echo -e     "\n\e[1m\e[32mTrue\e[0m\n" || echo -e "\n\e[1m\e[31mFalse\e[0m\n"
-Get list of validators
-planqd q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
+        [[ $(planqd q staking validator $PLANQD_VALOPER_ADDRESS -oj | jq -r .consensus_pubkey.key) = $(planqd status | jq -r .ValidatorInfo.PubKey.value) ]] && echo -e     "\n\e[1m\e[32mTrue\e[0m\n" || echo -e "\n\e[1m\e[31mFalse\e[0m\n"
+        
++ Get list of validators
+
+   
+        planqd q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
 
 ### Usefull commands
 
@@ -141,113 +144,113 @@ planqd q staking validators -oj --limit=3000 | jq '.validators[] | select(.statu
 + Service management
 Check logs
 
-    journalctl -fu planqd -o cat
+      journalctl -fu planqd -o cat
     
 + Start service
 
-    sudo systemctl start planqd
-    
+      sudo systemctl start planqd
+     
 + Stop service
 
-    sudo systemctl stop planqd
+      sudo systemctl stop planqd
     
 + Restart service
 
-    sudo systemctl restart planqd
+      sudo systemctl restart planqd
     
 ### Node info
 
 + Synchronization info
 
-    planqd status 2>&1 | jq .SyncInfo
+      planqd status 2>&1 | jq .SyncInfo
 
 + Validator info
 
-    planqd status 2>&1 | jq .ValidatorInfo
+      planqd status 2>&1 | jq .ValidatorInfo
     
 + Node info
 
-    planqd status 2>&1 | jq .NodeInfo
+      planqd status 2>&1 | jq .NodeInfo
     
 + Show node id
 
-    planqd tendermint show-node-id
+      planqd tendermint show-node-id
     
 ### Wallet operations
 + List of wallets
 
-    planqd keys list
+      planqd keys list
     
 + Recover wallet
 
-    planqd keys add $WALLET --recover
+      planqd keys add $WALLET --recover
     
 + Delete wallet
 
-    planqd keys delete $WALLET
+      planqd keys delete $WALLET
     
 + Get wallet balance
 
-    planqd query bank balances $PLANQD_WALLET_ADDRESS
+      planqd query bank balances $PLANQD_WALLET_ADDRESS
     
 + Transfer funds
 
-    planqd tx bank send $PLANQD_WALLET_ADDRESS <TO_PLANQ_WALLET_ADDRESS> 1000000000000aplanq
+      planqd tx bank send $PLANQD_WALLET_ADDRESS <TO_PLANQ_WALLET_ADDRESS> 1000000000000aplanq
     
 + Voting
 
-    planqd tx gov vote 1 yes --from $WALLET --chain-id=$PLANQ_CHAIN_ID
+      planqd tx gov vote 1 yes --from $WALLET --chain-id=$PLANQ_CHAIN_ID
     
 ### Staking, Delegation and Rewards
 
 + Delegate stake
 
-     planqd tx staking delegate $PLANQD_VALOPER_ADDRESS 1000000000000aplanq --from=$WALLET --chain-id=$PLANQ_CHAIN_ID --gas=auto
+      planqd tx staking delegate $PLANQD_VALOPER_ADDRESS 1000000000000aplanq --from=$WALLET --chain-id=$PLANQ_CHAIN_ID --gas=auto
      
 + Redelegate stake from validator to another validator
 
-     planqd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 1000000000000aplanq --from=$WALLET --chain-id=$PLANQ_CHAIN_ID --gas=auto
+      planqd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 1000000000000aplanq --from=$WALLET --chain-id=$PLANQ_CHAIN_ID --gas=auto
      
 + Withdraw all rewards
 
-     planqd tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$PLANQ_CHAIN_ID --gas=auto
+      planqd tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$PLANQ_CHAIN_ID --gas=auto
      
 + Withdraw rewards with commision
 
-     planqd tx distribution withdraw-rewards $PLANQD_VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$PLANQ_CHAIN_ID
+      planqd tx distribution withdraw-rewards $PLANQD_VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$PLANQ_CHAIN_ID
      
 ### Validator management
 + Edit validator
 
-    planqd tx staking edit-validator \
-     --moniker=$NODENAME \
-     --identity=<your_keybase_id> \
-     --website="<your_website>" \
-     --details="<your_validator_description>" \
-     --chain-id=$PLANQ_CHAIN_ID \
-     --from=$WALLET
+     planqd tx staking edit-validator \
+      --moniker=$NODENAME \
+      --identity=<your_keybase_id> \
+      --website="<your_website>" \
+      --details="<your_validator_description>" \
+      --chain-id=$PLANQ_CHAIN_ID \
+      --from=$WALLET
      
 + Unjail validator
 
-   planqd tx slashing unjail \
-     --broadcast-mode=block \
-     --from=$WALLET \
-     --chain-id=$PLANQ_CHAIN_ID \
-     --gas=auto
+    planqd tx slashing unjail \
+      --broadcast-mode=block \
+      --from=$WALLET \
+      --chain-id=$PLANQ_CHAIN_ID \
+      --gas=auto
      
      
 
 + Delete node
 This commands will completely remove node from server. Use at your own risk!
 
-    sudo systemctl stop planqd && \
-    sudo systemctl disable planqd && \
-    rm /etc/systemd/system/planqd.service && \
-    sudo systemctl daemon-reload && \
-    cd $HOME && \
-    rm -rf planqd && \
-    rm -rf .planqd && \
-    rm -rf $(which planqd)
+     sudo systemctl stop planqd && \
+     sudo systemctl disable planqd && \
+     rm /etc/systemd/system/planqd.service && \
+     sudo systemctl daemon-reload && \
+     cd $HOME && \
+     rm -rf planqd && \
+     rm -rf .planqd && \
+     rm -rf $(which planqd)
 
 
 
