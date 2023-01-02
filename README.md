@@ -53,7 +53,7 @@ Next you have to make sure your validator is syncing blocks. You can use command
 
 + To create new wallet you can use command below. Don’t forget to save the mnemonic
 
-    planqd keys add $WALLET
+      planqd keys add $WALLET
    
 (OPTIONAL) To recover your wallet using seed phrase
 
